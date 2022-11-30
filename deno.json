@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "start": "deno run -A --watch=public/ mod.ts",
+    "prod": "deno run -A mod.ts"
+  },
+  "importMap": "./import_map.json",
+  "compilerOptions": {
+    "jsxFactory": "h"
+  }
+}
