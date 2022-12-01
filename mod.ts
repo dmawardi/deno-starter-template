@@ -6,7 +6,7 @@ import errorHandler from "./controllers/middleware/error.ts";
 import { AddResponseLogger } from "./controllers/middleware/ResponseLogger.ts";
 // Routes
 import api from "./routes/api.ts";
-
+import staticApi from "./routes/static.ts";
 
 // Routes
 // import api from "./routes/api.ts";
@@ -29,10 +29,15 @@ AddResponseLogger(app);
 // Use routes from router in api.ts and prefix with /api
 app.use(api.prefix("/api").routes());
 
-  //   Handler for everything
-  app.use((ctx) => {
-    ctx.response.body = "Hello World!";
-  });
+// Static routes
+// If no match to routes found above,
+// then serve from static folder
+app.use(staticApi);
+
+//   Handler for everything
+// app.use((ctx) => {
+//   ctx.response.body = "Hello World!";
+// });
 
 // If this file is run as the main program
 if (import.meta.main) {
