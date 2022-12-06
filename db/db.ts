@@ -4,6 +4,7 @@ interface dbClient {
   client: Database;
   models: {
     Flight: typeof Flight;
+    User: typeof User;
   };
 }
 
@@ -17,6 +18,7 @@ const connection = new PostgresConnector({
 
 const db = new Database(connection);
 
+// Models
 class Flight extends Model {
   static table = "flights";
   static timestamps = true;
@@ -33,8 +35,27 @@ class Flight extends Model {
   };
 }
 
+class User extends Model {
+  static table = "users";
+  static timestamps = true;
+
+  static fields = {
+    id: { primaryKey: true, autoIncrement: true },
+    name: DataTypes.STRING,
+    username: DataTypes.STRING,
+    email: DataTypes.STRING,
+    password: DataTypes.STRING,
+    role: DataTypes.STRING,
+  };
+
+  static defaults = {
+    name: "",
+    role: "user",
+  };
+}
+
 //   Connect to DB using created models
-db.link([Flight]);
+db.link([Flight, User]);
 
 //   Create tables: Sync DB and drop if not found
 await db.sync({ drop: true });
@@ -45,6 +66,7 @@ export default <dbClient>{
   client: db,
   models: {
     Flight: Flight,
+    User: User,
   },
 };
 

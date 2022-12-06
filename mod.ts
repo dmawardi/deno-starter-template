@@ -8,6 +8,7 @@ import { AddResponseLogger } from "./controllers/middleware/ResponseLogger.ts";
 import api from "./routes/api.ts";
 import staticApi from "./routes/static.ts";
 import db from "./db/db.ts";
+import { DB } from "https://deno.land/x/sqlite@v3.1.3/mod.ts";
 
 // Routes
 // import api from "./routes/api.ts";
@@ -49,8 +50,19 @@ flight.departure = "London";
 flight.destination = "San Francisco";
 await flight.save();
 
+// Admin user
+const user = new db.models.User();
+user.username = "krongs";
+user.email = "d@gmail.com";
+user.password = "hello";
+user.role = "admin";
+await user.save();
+
 const onlyDestinations = await db.models.Flight.select("destination").all();
 console.log("onlyDestinations: ", onlyDestinations);
+
+const allUsers = await db.models.User.all();
+console.log("allUsers: ", allUsers);
 
 // If this file is run as the main program
 // then setup server and listen to port
