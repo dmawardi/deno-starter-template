@@ -7,6 +7,7 @@ import { AddResponseLogger } from "./controllers/middleware/ResponseLogger.ts";
 // Routes
 import api from "./routes/api.ts";
 import staticApi from "./routes/static.ts";
+import db from "./db/db.ts";
 
 // Routes
 // import api from "./routes/api.ts";
@@ -34,12 +35,25 @@ app.use(api.prefix("/api").routes());
 // then serve from static folder
 app.use(staticApi);
 
-//   Handler for everything
-// app.use((ctx) => {
-//   ctx.response.body = "Hello World!";
-// });
+// Create records
+// First method
+const firstMethodCreate = await db.models.Flight.create({
+  departure: "Paris",
+  destination: "Tokyo",
+});
+console.log("firstMethodCreate: ", firstMethodCreate);
+
+//   Second method
+const flight = new db.models.Flight();
+flight.departure = "London";
+flight.destination = "San Francisco";
+await flight.save();
+
+const onlyDestinations = await db.models.Flight.select("destination").all();
+console.log("onlyDestinations: ", onlyDestinations);
 
 // If this file is run as the main program
+// then setup server and listen to port
 if (import.meta.main) {
   log.info("Starting Server");
 
