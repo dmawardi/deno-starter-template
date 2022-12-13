@@ -1,4 +1,5 @@
 import { Router, RouterContext } from "oak";
+import db from "../db/db.ts";
 
 // Create router
 const router = new Router();
@@ -19,8 +20,11 @@ const users = [
   },
 ];
 
-router.get("/users", (ctx: RouterContext<"/users">) => {
-  ctx.response.body = users;
+router.get("/users", async (ctx: RouterContext<"/users">) => {
+  console.log("hitting users");
+  const allUsers = await db.models.User.all();
+  console.log("allUsers: ", allUsers);
+  ctx.response.body = allUsers;
 });
 
 router.post("/users", async (ctx: RouterContext<"/users">) => {

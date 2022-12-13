@@ -8,16 +8,11 @@ import { AddResponseLogger } from "./controllers/middleware/ResponseLogger.ts";
 import api from "./routes/api.ts";
 import staticApi from "./routes/static.ts";
 import db from "./db/db.ts";
-import { DB } from "https://deno.land/x/sqlite@v3.1.3/mod.ts";
+import { seedDatabase } from "./db/seed.ts";
 
-// Routes
-// import api from "./routes/api.ts";
-// import staticApi from "./routes/static.ts";
-
+// Build new app with port
 const app = new Application();
 const port = <string>Deno.env.get("SERVER_PORT");
-
-console.log("port: ", port);
 
 // Middleware
 // Errors
@@ -36,33 +31,7 @@ app.use(api.prefix("/api").routes());
 // then serve from static folder
 app.use(staticApi);
 
-// Create records
-// First method
-const firstMethodCreate = await db.models.Flight.create({
-  departure: "Paris",
-  destination: "Tokyo",
-});
-console.log("firstMethodCreate: ", firstMethodCreate);
-
-//   Second method
-const flight = new db.models.Flight();
-flight.departure = "London";
-flight.destination = "San Francisco";
-await flight.save();
-
-// Admin user
-const user = new db.models.User();
-user.username = "krongs";
-user.email = "d@gmail.com";
-user.password = "hello";
-user.role = "admin";
-await user.save();
-
-const onlyDestinations = await db.models.Flight.select("destination").all();
-console.log("onlyDestinations: ", onlyDestinations);
-
-const allUsers = await db.models.User.all();
-console.log("allUsers: ", allUsers);
+seedDatabase(db);
 
 // If this file is run as the main program
 // then setup server and listen to port

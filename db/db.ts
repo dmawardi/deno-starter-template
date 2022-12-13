@@ -1,9 +1,17 @@
-import { DataTypes, Database, Model, PostgresConnector } from "denoDB";
+import {
+  DataTypes,
+  Database,
+  Model,
+  PostgresConnector,
+  Relationships,
+} from "denoDB";
+import Article from "./models/article.ts";
+import User from "./models/user.ts";
 
-interface dbClient {
+export interface dbClient {
   client: Database;
   models: {
-    Flight: typeof Flight;
+    Article: typeof Article;
     User: typeof User;
   };
 }
@@ -18,54 +26,21 @@ const connection = new PostgresConnector({
 
 const db = new Database(connection);
 
-// Models
-class Flight extends Model {
-  static table = "flights";
-  static timestamps = true;
-
-  static fields = {
-    id: { primaryKey: true, autoIncrement: true },
-    departure: DataTypes.STRING,
-    destination: DataTypes.STRING,
-    flightDuration: DataTypes.FLOAT,
-  };
-
-  static defaults = {
-    flightDuration: 2.5,
-  };
-}
-
-class User extends Model {
-  static table = "users";
-  static timestamps = true;
-
-  static fields = {
-    id: { primaryKey: true, autoIncrement: true },
-    name: DataTypes.STRING,
-    username: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    role: DataTypes.STRING,
-  };
-
-  static defaults = {
-    name: "",
-    role: "user",
-  };
-}
+// Build relationships from imported models
+Relationships.belongsTo(Article, User);
 
 //   Connect to DB using created models
-db.link([Flight, User]);
+db.link([User, Article]);
 
 //   Create tables: Sync DB and drop if not found
 await db.sync({ drop: true });
 
-// await db.close();
+await db.close();
 
 export default <dbClient>{
   client: db,
   models: {
-    Flight: Flight,
+    Article: Article,
     User: User,
   },
 };
